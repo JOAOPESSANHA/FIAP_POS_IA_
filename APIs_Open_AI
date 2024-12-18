@@ -1,0 +1,47 @@
+pip install openai
+
+from dotenv import load_dotenv
+
+load_dotenv()
+import os
+from openai import OpenAI
+
+
+client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+#API do ChatGPT
+response = client.chat.completions.create(
+  model="gpt-3.5-turbo",  # Procure na documentação e teste com outros modelos
+  messages=[
+      {"role": "system", "content": "Você é um professor de programação especializado em inteligência artificial"},
+      {"role": "user", "content": "Explique o conceito de inteligência artificial de forma simples para desenvolvedores."}
+      ],
+  max_tokens=150
+
+)
+
+print(response)
+response.choices[0].message.content
+#API do DALL-E
+# Criando uma imagem a partir de uma descrição textual
+response = client.images.generate(
+  model="dall-e-2",  # Certifique-se de usar o modelo correto para DALL-E
+  prompt="uma ilustração de um gato astronauta no espaço, estilo cartoon",
+  n=1,  # Número de imagens a gerar
+  size="1024x1024"  # Tamanho da imagem
+)
+
+# A resposta inclui um URL para a imagem gerada
+print(response.data[0].url)
+response.data
+# Gerando código a partir de um prompt
+response = client.chat.completions.create(
+  model="gpt-3.5-turbo",  # Procure na documentação e teste com outros modelos
+  messages=[
+      {"role": "system", "content": "Você é um professor de programação especializado em Python."}, #Retorne apenas o conteúdo do código gerado
+      {"role": "user", "content": "Escreva uma função em Python que aceite um número inteiro e retorne True se o número for primo, caso contrário, retorne False."}
+      ],
+  max_tokens=1000,
+  temperature=0.5  # Um valor mais baixo faz com que o modelo gere respostas mais determinísticas e focadas
+)
+
+print(response.choices[0].message.content.strip())
